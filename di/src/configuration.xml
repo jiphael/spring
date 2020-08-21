@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+
+	<!-- <bean id="p" class="com.my.vo.Product" scope="prototype" init-method="testInit"> -->
+	<!-- setter injection -->
+	<!-- <property name="prod_no" value="C0001"></property> -->
+	<!-- constructor injection -->
+	<!-- <constructor-arg index="0" value="C0001" /> -->
+	<!-- <constructor-arg index="1" value="테스트" /> -->
+	<!-- <constructor-arg index="2" value="1000" /> -->
+	<!-- </bean> -->
+
+	<bean id="line" class="com.my.vo.OrderLine">
+		<property name="order_no" value="1" />
+		<property name="order_p" ref="p" />
+		<property name="order_quantity" value="5" />
+	</bean>
+
+	<bean id="line2" class="com.my.vo.OrderLine">
+		<property name="order_no" value="1" />
+		<property name="order_p" ref="p" />
+		<property name="order_quantity" value="2" />
+	</bean>
+
+	<bean id="info" class="com.my.vo.OrderInfo">
+		<constructor-arg name="order_c" ref="c" /> <!--다른객체참고는 ref사용 -->
+		<property name="order_dt">
+			<null />
+		</property>
+		<property name="lines">
+			<list>
+				<ref bean="line" />
+				<ref bean="line2" />
+			</list>
+		</property>
+	</bean>
+	<bean id="c" class="com.my.vo.Customer">
+		<property name="id" value="id1" />
+		<property name="pwd" value="p1" />
+		<property name="name" value="홍길동" />
+		<property name="addr" value="" />
+	</bean>
+	<bean id="mapvo" class="com.my.vo.MapVO">
+		<property name="map">
+			<map>
+				<entry key="one" value="1" />
+				<entry key="two" value="2" />
+				<entry key="three" value="3" />
+			</map>
+		</property>
+	</bean>
+	<bean id="propertiesvo" class="com.my.vo.PropertiesVO">
+		<constructor-arg>
+			<props>
+				<prop key="controller">controller.properties</prop>
+				<prop key="dao">dao.properties</prop>
+				<prop key="msg">msg.properties</prop>
+			</props>
+		</constructor-arg>
+	</bean>
+	<context:component-scan base-package="com.my.vo"></context:component-scan>
+	<context:component-scan
+		base-package="com.my.dao"></context:component-scan>
+	<context:component-scan
+		base-package="com.my.service"></context:component-scan>
+	<bean id="dataSource1"
+		class="org.springframework.jdbc.datasource.SimpleDriverDataSource" primary="true">
+		<qualifier value="myds"></qualifier>
+		<property name="driverClass"
+			value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url"
+			value="jdbc:oracle:thin:@127.0.0.1:1521:XE" />
+		<property name="username" value="test" />
+		<property name="password" value="test" />
+	</bean>
+	<bean id="dataSource2"
+		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<qualifier value="tutords"></qualifier>
+		<property name="driverClass"
+			value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url"
+			value="jdbc:oracle:thin:@192.168.0.119:1521:XE" />
+		<property name="username" value="test" />
+		<property name="password" value="test" />
+	</bean>
+
+</beans>
