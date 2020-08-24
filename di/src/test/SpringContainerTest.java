@@ -1,6 +1,12 @@
 package test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,4 +39,24 @@ class SpringContainerTest {
 	void testDAO(){
 		assertNotNull(dao);
 	}
+	
+	@Autowired
+	@Qualifier(value = "hikarids")
+	DataSource ds;
+	
+	@Test
+	@DisplayName("HikariDBCP")
+	void testHikari() {
+		assertNotNull(ds);
+		try {
+			Connection con = ds.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	
+	}
+	
+
 }

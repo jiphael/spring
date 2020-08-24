@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderMapper">
+	<resultMap id ="OrderInfoResultMap" type="OrderInfo" autoMapping="true" >
+	<id property="order_no" column="order_no"/>
+	<association property="order_c" javaType="Customer" autoMapping="true">
+		<id property="id" column="order_id" />
+	</association>
+	<collection property="lines" ofType="OrderLine" autoMapping="true">
+		<id property="order_no" column="order_no"/>
+		<id property="order_p.prod_no" column="order_pord_no"/>
+		<association property="order_p" javaType="Product">
+			<id property="prod_no" column="order_prod_no"/>
+		</association>
+	</collection>
+<!-- 	<result property="order_dt" column="order_dt"/> 컬럼명과 프로퍼티가 같을때는 result는 생략가능.--> 
+	</resultMap>
+   <insert id="insertInfo">
+      INSERT INTO order_info(order_no, order_id, order_dt)
+      VALUES(order_seq.NEXTVAL, #{order_id}, SYSDATE)
+   </insert>
+   <insert id="insertLine" parameterType="OrderLine">
+      INSERT INTO order_line(order_no, order_prod_no, order_quantity)
+      VALUES (order_seq.CURRVAL, #{order_p.prod_no}, #{order_quantity})
+   </insert>
+   
+   <select id="selectById" resultMap="OrderInfoResultMap">
+<!--    <select id="selectById" resultType="com.my.vo.OrderInfo"> -->
+      SELECT info.order_no,  order_id, order_dt
+      ,order_prod_no, prod_name, prod_price
+      , order_quantity
+      FROM order_info info
+      JOIN order_line line ON (info.order_no = line.order_no)
+      JOIN product p ON (line.order_prod_no = p.prod_no)
+      WHERE order_id = #{order_id}
+      ORDER BY info.order_no DESC
+   </select>
+</mapper>
