@@ -22,6 +22,7 @@ public class Customer
 	private static final long serialVersionUID = 1L;
 	@NonNull
 	private String id;
+	@NonNull
 	transient private String pwd;
 	
 //	public Customer() {
