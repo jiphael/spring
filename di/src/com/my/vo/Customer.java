@@ -33,12 +33,12 @@ public class Customer
 //		this.id = id;
 //		this.pwd = pwd;
 //	}
-//	public Customer(String id, String pwd, String name, String addr) {
-//		super(name, addr);
-//		
-//		this.id = id;
-//		this.pwd = pwd;
-//	}
+	public Customer(String id, String pwd, String name, String addr) {
+		super(name, addr);
+		
+		this.id = id;
+		this.pwd = pwd;
+	}
 //	
 //	public String getId() {
 //		return id;
