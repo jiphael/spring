@@ -6,6 +6,7 @@
   <select id="selectByNo" parameterType="map" resultType="Product" >
   select * from product where prod_no=#{no} 
   </select>
+  
   <insert id="insert" parameterType="Product">
   INSERT INTO product(prod_no, prod_name, prod_price)
   VALUES (#{prod_no},#{prod_name},#{prod_price})

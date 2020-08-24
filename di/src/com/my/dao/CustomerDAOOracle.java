@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -23,10 +24,11 @@ import com.my.vo.Customer;
 import com.my.vo.Postal;
 
 @Repository
-@Qualifier(value = "tutords")
 @Primary
 public class CustomerDAOOracle implements CustomerDAO2 {
 	@Autowired
+//	@Qualifier(value = "tutords")
+    private SqlSessionFactory sqlSessionFactory;
 	private DataSource ds;
 	@Override
 	public void insert(Customer c) throws AddException, DuplicatedException {
@@ -49,11 +51,11 @@ public class CustomerDAOOracle implements CustomerDAO2 {
 			"INSERT INTO customer(id, pwd, name, buildingno, addr) VALUES (?,?,?,?,?)";
 		try {
 			pstmt = con.prepareStatement(insertSQL);
-			pstmt.setString(1, c.getId());	pstmt.setString(2, c.getPwd());
+			pstmt.setString(1, c.getId());	
+			pstmt.setString(2, c.getPwd());
 			pstmt.setString(3, c.getName());
 			pstmt.setString(4, c.getPostal().getBuildingno());
 			pstmt.setString(5, c.getAddr());
-			
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
