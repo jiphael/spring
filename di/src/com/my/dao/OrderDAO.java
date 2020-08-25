@@ -19,9 +19,9 @@ public class OrderDAO {
 		Connection con = null;
 		try {
 			con = MyConnection.getConnection();
-			con.setAutoCommit(false); //ï¿½Úµï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-			insertInfo(con, info);             //ï¿½Ö¹ï¿½ï¿½âº» ï¿½ß°ï¿½
-			insertLines(con, info.getLines()); //ï¿½Ö¹ï¿½ï¿½ó¼¼µï¿½ ï¿½ß°ï¿½
+			con.setAutoCommit(false); //ÀÚµ¿Ä¿¹Ô ÇØÁ¦
+			insertInfo(con, info);             //ÁÖ¹®±âº» Ãß°¡
+			insertLines(con, info.getLines()); //ÁÖ¹®»ó¼¼µé Ãß°¡
 			con.commit();
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -37,7 +37,7 @@ public class OrderDAO {
 		}
 	}
 	private void insertInfo(Connection con, OrderInfo info)  throws AddException{
-		//ï¿½Ö¹ï¿½ï¿½âº»ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+		//ÁÖ¹®±âº»Á¤º¸ Ãß°¡
 		PreparedStatement pstmt = null;
 		String insertInfoSQL = 
 				"INSERT INTO order_info(order_no, order_id, order_dt)"
@@ -57,7 +57,7 @@ public class OrderDAO {
 		
 	}
 	private void insertLines(Connection con, List<OrderLine> lines)  throws AddException{
-		//ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+		//ÁÖ¹®»ó¼¼Á¤º¸µé Ãß°¡
 			
 		PreparedStatement pstmt = null;
 		String insertLineSQL = 
@@ -69,9 +69,9 @@ public class OrderDAO {
 				pstmt.setString(1, line.getOrder_p().getProd_no());
 				pstmt.setInt(2, line.getOrder_quantity());
 				//pstmt.executeUpdate();
-				pstmt.addBatch(); //ï¿½Ï°ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+				pstmt.addBatch(); //ÀÏ°ýÃ³¸®¿¡ Ãß°¡
 			}
-			pstmt.executeBatch(); //ï¿½Ï°ï¿½Ã³ï¿½ï¿½ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½ï¿½
+			pstmt.executeBatch(); //ÀÏ°ýÃ³¸®ÀÛ¾÷ ¼öÇà
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -108,16 +108,16 @@ public class OrderDAO {
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
 			List<OrderInfo> infos = new ArrayList<>(); 			
-			List<OrderLine> lines = null; //ï¿½Ö¹ï¿½ï¿½ó¼¼µï¿½
-			int oldOrder_no = 0;//ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½È£
+			List<OrderLine> lines = null; //ÁÖ¹®»ó¼¼µé
+			int oldOrder_no = 0;//ÀÌÀüÁÖ¹®¹øÈ£
 			while(rs.next()) {
-				int order_no = rs.getInt("order_no"); //ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½È£ ï¿½ï¿½ï¿½				
+				int order_no = rs.getInt("order_no"); //ÇàÀÇ ÁÖ¹®¹øÈ£ ¾ò±â				
 				if(oldOrder_no != order_no) {
-					OrderInfo info=null; //ï¿½Ö¹ï¿½ï¿½âº»
-					info = new OrderInfo();   //ï¿½Ö¹ï¿½ï¿½âº»ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+					OrderInfo info=null; //ÁÖ¹®±âº»
+					info = new OrderInfo();   //ÁÖ¹®±âº»°´Ã¼ »õ·Î »ý¼º
 					info.setOrder_no(order_no); 
 					info.setOrder_dt(rs.getDate("order_dt"));
-					lines = new ArrayList<>(); //ï¿½Ö¹ï¿½ï¿½ó¼¼µï¿½lines ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+					lines = new ArrayList<>(); //ÁÖ¹®»ó¼¼µélines »õ·Î »ý¼º
 					info.setLines(lines); 
 					infos.add(info);	
 					oldOrder_no = order_no;
@@ -126,18 +126,18 @@ public class OrderDAO {
 				order_p.setProd_no(rs.getString("order_prod_no"));
 				order_p.setProd_name(rs.getString("prod_name"));
 				order_p.setProd_price(rs.getInt("prod_price"));
-				//order_p.setAmount(rs.getInt("ï¿½Ý¾ï¿½"));//???
+				//order_p.setAmount(rs.getInt("±Ý¾×"));//???
 				
 				OrderLine line = new OrderLine(
 						 order_no
 						,order_p
 						,rs.getInt("order_quantity")
 						);
-				//line.setAmount(rs.getInt("ï¿½Ý¾ï¿½"));
+				//line.setAmount(rs.getInt("±Ý¾×"));
 				lines.add(line);
 			}
 			if(infos.size() == 0) {
-				throw new FindException("ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½");
+				throw new FindException("ÁÖ¹®ÀÌ ¾ø½À´Ï´Ù");
 			}
 			return infos;
 		} catch (SQLException e) {

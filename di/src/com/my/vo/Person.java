@@ -7,28 +7,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Setter
 @Getter
 public class Person
              implements Serializable{	
 	private static final long serialVersionUID = 1L;
-	//private String name;
-	@NonNull
+//	@NonNull
 	protected String name;
-	@Autowired(required = false)
-	private Postal postal;//���θ� �����ȣ ����
 	
-	@NonNull
-	private String addr; //���ּ�
-//	public Person() {
-//		
-//	}
+	@Autowired(required = false)	
+//eclipse오류발생시 우클릭->프로젝트->Maven->Update Project
+//	@Setter(onMethod_={@Autowired(required = false)})
+	private Postal postal;
+	
+//	@NonNull
+	private String addr; 
+//	public Person() {}
 //	public Person(String name, String addr) { 
 //		this(name, null, addr);
 //	}	

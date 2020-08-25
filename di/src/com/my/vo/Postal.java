@@ -1,10 +1,16 @@
 package com.my.vo;
 
+import org.springframework.stereotype.Component;
+
+import lombok.ToString;
+
+@Component
+@ToString
 public class Postal {
 	private String zipcode;
-	private String buildingno; //건물관리번호
-	private String city; //시군구읍면
-	private String doro; //도로명 건물본번-부번
+	private String buildingno; //嫄대Ъ踰덊샇
+	private String city; //
+	private String doro; //
 	private String building;
 	public Postal() {
 		super();

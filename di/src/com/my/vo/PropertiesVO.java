@@ -17,10 +17,5 @@ public class PropertiesVO {
 	public void setEnv(Properties env) {
 		this.env = env;
 	}
-
-	@Override
-	public String toString() {
-		return "PropertiesVO [env=" + env + "]";
-	}
 	
 }

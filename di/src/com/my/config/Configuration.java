@@ -8,7 +8,9 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import com.my.vo.Customer;
@@ -19,6 +21,7 @@ import com.my.vo.Product;
 import com.my.vo.PropertiesVO;
 
 @org.springframework.context.annotation.Configuration
+@ComponentScan({"com.my.vo","com.my.service", "com.my.dao"})
 public class Configuration {
 	@Bean(name="p")
 	public com.my.vo.Product getP(){
@@ -27,7 +30,6 @@ public class Configuration {
 //		return p;
 		return new Product("C0001", "테스트", 1000);
 	}
-	
 
 	@Bean(name="line2")
 	public OrderLine getOrderLine1() {		
@@ -94,17 +96,25 @@ public class Configuration {
 		return new PropertiesVO(env);
 	}
 	
-	@Bean(name="dataSource")
+//	@Bean(name="dataSource")
+	@Bean
+	@Qualifier(value = "myds")
 	public DataSource getDataSource() {
-		SimpleDriverDataSource sds =
-                                   new SimpleDriverDataSource();
+		SimpleDriverDataSource sds = new SimpleDriverDataSource();
 		sds.setDriverClass(oracle.jdbc.driver.OracleDriver.class);
 		sds.setUrl("jdbc:oracle:thin:@127.0.0.1:1521:XE");
 		sds.setUsername("test");
 		sds.setPassword("test");
 		return sds;
 	}
-
-	
-	
+	@Bean
+	@Qualifier(value = "tutords")
+	public DataSource getDataSource2() {
+		SimpleDriverDataSource sds = new SimpleDriverDataSource();
+		sds.setDriverClass(oracle.jdbc.driver.OracleDriver.class);
+		sds.setUrl("jdbc:oracle:thin:@127.0.0.1:1521:XE");
+		sds.setUsername("test");
+		sds.setPassword("test");
+		return sds;
+	}
 }

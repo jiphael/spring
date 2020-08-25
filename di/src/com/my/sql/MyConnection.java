@@ -11,11 +11,11 @@ public class MyConnection {
 		String className = 
 				"oracle.jdbc.driver.OracleDriver";		
 		Connection con = null;		
-		//1)JDBCµå¶óÀÌ¹ö ·Îµå
+		//1)JDBCë“œë¼ì´ë²„ ë¡œë“œ
 		Class.forName(className);
-		System.out.println("JDBCµå¶óÀÌ¹ö ·Îµå ¼º°ø");
+		System.out.println("JDBCë“œë¼ì´ë²„ ë¡œë“œ ì„±ê³µ");
 		
-		//2)DB¿¬°á
+		//2)DBì—°ê²°
 		String url, user, password;
 		url = "jdbc:oracle:thin:@localhost:1521:xe";
 		user = "test";

@@ -3,21 +3,30 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="CustomerMapper">
-  <resultMap id="CustomerResultMap" type="Customer" autoMapping="true">
-  <id property="id" column="id"/>
-  <association property="Customer_c" javaType="Customer" autoMapping="true">
-  		<id property="id" column="id" />
-  </association>
+  <resultMap id="CustomerResultMap" 
+             type="Customer" 
+             autoMapping="true">
+    <id property="id" column="id"/>
+    <result property="pwd" column="pwd"/>
+   
+    <association property="postal" 
+                 javaType="Postal" autoMapping="true">
+    	<id property="buildingno" column="buildingno"/>
+    </association>
   </resultMap>
   <insert id="insert" parameterType="Customer">
   INSERT INTO customer(id, pwd, name, buildingno, addr) 
-  VALUES (#{id},#{pwd},#{name},#{buildingno},#{addr})
+  VALUES (#{id}, #{pwd}, #{name}, #{postal.buildingno}, #{addr})
   </insert>
-  <select id="selectById" resultMap="CustomerMap">
-  	SELECT id, pwd, name,zipcode ,p.buildingno,sido ||' ' || NVL(sigungu, ' ') ||' ' || NVL(eupmyun, ' ')  
-  	city,doro || ' ' || DECODE(building2, '0' , 
-  	building1, building1 ||'-' || building2) doro
-	,building,addr FROM customer c LEFT JOIN postal p ON (c.buildingno = p.buildingno) WHERE id=#{id}
+  <select id="selectById" resultMap="CustomerResultMap">
+  SELECT id, pwd, name 
+	      ,zipcode 
+	      ,p.buildingno buildingno
+	      ,sido ||' ' || NVL(sigungu, ' ') ||' ' || NVL(eupmyun, ' ')  city     
+	      ,doro || ' ' || DECODE(building2, '0' , building1, building1 ||'-' || building2) doro 
+	      ,building
+	      ,addr
+	FROM customer c LEFT JOIN postal p ON (c.buildingno = p.buildingno) 
+	WHERE id=#{id}
   </select>
-	
 </mapper>

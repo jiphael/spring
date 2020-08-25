@@ -16,9 +16,10 @@ import com.my.exception.RemoveException;
 import com.my.vo.Customer;
 
 @Repository
-@Qualifier(value = "customerDAOMySQL")
+@Qualifier(value="customerDAOMySQL")
 public class CustomerDAOMySQL implements CustomerDAO2 {
 	@Autowired
+	@Qualifier(value = "myds")
 	private DataSource ds;
 	@Override
 	public void insert(Customer c) throws AddException, DuplicatedException {

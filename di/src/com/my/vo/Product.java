@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component(value = "p")
-@Scope(value = "prototype")
+//@Scope(value = "prototype")
 
 public class Product {
 	private String prod_no;
@@ -15,7 +15,7 @@ public class Product {
 	private int prod_price;
 	public Product() {
 		super();
-		System.out.println("Product 객체가 생성됨");
+		System.out.println("Product객체가 생성됨");
 	}
 	public Product(String prod_no, String prod_name, int prod_price) {
 		super();
@@ -23,14 +23,15 @@ public class Product {
 		this.prod_name = prod_name;
 		this.prod_price = prod_price;
 	}
-	@PostConstruct //자바기본어노테이션.jdk 1.9버전에서는 쓸수없으면 javax Annotation api 다운.
+
+	@PostConstruct
 	public void testInit() {
 		System.out.println("객체생성후 testInit()호출됨");
 	}
 	
 	@PreDestroy
-	public void testDestory() {
-		System.out.println("객체소멸전 testDestroy()호출됨");
+	public void testDestroy() {
+		System.out.println("객체소멸전 testDestory()호출됨");
 	}
 	
 	@Override
@@ -65,8 +66,7 @@ public class Product {
 	}
 	public void setProd_no(String prod_no) {
 		this.prod_no = prod_no;
-		System.out.println("setProd_no("+prod_no+")��ȣ���");
-		
+		System.out.println("setProd_no(" + prod_no+")�� ȣ���");
 	}
 	public String getProd_name() {
 		return prod_name;

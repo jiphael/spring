@@ -1,10 +1,13 @@
 package com.my.service;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.my.dao.CustomerDAO2;
@@ -15,15 +18,12 @@ import com.my.exception.RemoveException;
 import com.my.share.CustomerShare;
 import com.my.vo.Customer;
 
-@Service(value="customerService")
+@Service(value = "customerService")
 public class CustomerService2 {
 	@Autowired
-	@Qualifier(value="customerDAOOracle")
+	@Qualifier(value = "customerDAOOracle")
 	private CustomerDAO2 dao;
 	
-	public CustomerService2(CustomerDAO2 dao) {
-		this.dao = dao;
-	}
 	public CustomerDAO2 getDao() {
 		return dao;
 	}

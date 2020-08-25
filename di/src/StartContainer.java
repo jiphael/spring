@@ -17,61 +17,60 @@ import com.my.vo.Product;
 import com.my.vo.PropertiesVO;
 
 public class StartContainer {
-
 	public static void main(String[] args) throws FileNotFoundException, IOException, FindException {
-		//스프링 컨테이너 구동
+		
 		ClassPathXmlApplicationContext ctx;
 		String configLocation = "configuration.xml";
 		ctx = new ClassPathXmlApplicationContext(configLocation);
 		
 //		AnnotationConfigApplicationContext ctx = 
 //				new AnnotationConfigApplicationContext(com.my.config.Configuration.class);
-		Product p3 = ctx.getBean("p", Product.class);
-		System.out.println(p3);
-		
-		
-		Product p1 = ctx.getBean("p", com.my.vo.Product.class); //��ü�� �ϳ����������. ������ �⺻������ �̱�������.
+		Product p1 = ctx.getBean("p", com.my.vo.Product.class);
 		Product p2 = ctx.getBean("p", com.my.vo.Product.class);
-		System.out.println(p1==p2);
-		System.out.println(p1.getProd_no());
-		System.out.println(p1.getProd_name());
-		System.out.println(p1.getProd_price());
+		System.out.println(p1 == p2);
+		System.out.println(p1.getProd_no()); 
+		System.out.println(p1.getProd_name()); 
+		System.out.println(p1.getProd_price()); 		
 		
 		OrderLine line = ctx.getBean("line", com.my.vo.OrderLine.class);
 		System.out.println(line);
 		
-		OrderInfo info =ctx.getBean("info", OrderInfo.class);
+		OrderInfo info = ctx.getBean("info", OrderInfo.class);
 		System.out.println(info);
 		
 		MapVO mapvo = ctx.getBean("mapvo", MapVO.class);
 		Map map = mapvo.getMap();
 		System.out.println(map);
 		
-		PropertiesVO propertiesvo =ctx.getBean("propertiesvo", PropertiesVO.class);
-		//System.out.println(propertiesvo.getEnv());
-		
+		PropertiesVO propertiesvo = ctx.getBean("propertiesvo", PropertiesVO.class);
+//		System.out.println(propertiesvo.getEnv());
+
 		Properties env = propertiesvo.getEnv();
 		String fileName = env.getProperty("msg");
 		Properties env1 = new Properties();
-		env1.load(new FileInputStream(fileName));
+		env1.load(new FileInputStream(fileName));//msg.properties占쏙옙占쏙옙 占싸듸옙
+		
 		String greeting = env1.getProperty("greeting");
 		System.out.println(greeting);
-		
-//		ProductDAO productDAO = ctx.getBean("productDAO",com.my.dao.ProductDAO.class);
-//		productDAO.selectAll();
-		
-		ProductService productService = ctx.getBean("productService", ProductService.class);
-		productService.findAll();
-		
+
+//		ProductDAO productDAO = 
+//				ctx.getBean("productDAO", com.my.dao.ProductDAO.class);
+//		productDAO.selectAll();		
+		ProductService productService =
+				ctx.getBean("productService", ProductService.class);
 		List<Product> list = productService.findAll();	
 		System.out.println(list);
 		
-		CustomerService2 customerService = ctx.getBean("customerService",CustomerService2.class);
+		//----------------------
+		CustomerService2 customerService = 
+				ctx.getBean("customerService", 
+						CustomerService2.class);
 		customerService.login("id1", "p1");
-		System.out.println("로그인성공");
+		System.out.println("로그인 성공");
 		System.out.println("-------------------------");
 		
-
+		for(String beanName:ctx.getBeanDefinitionNames()) {
+			System.out.println(beanName);
+		}
 	}
-	
 }

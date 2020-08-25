@@ -1,0 +1,9 @@
+.metadata/.bak_0.log
+*.log
+.metadata/
+di/target/classes/META-INF/maven/di/di/pom.properties
+di/target/classes/com/my/vo/Customer.class
+di/target/classes/com/my/vo/Person.class
+di/target/classes/META-INF/maven/di/di/pom.xml
+*.class
+*.classpath
