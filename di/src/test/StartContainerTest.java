@@ -8,14 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.my.dao.CustomerDAO2;
+import com.my.dao.OrderDAO;
 import com.my.dao.ProductDAO;
 import com.my.exception.FindException;
 import com.my.vo.Customer;
+import com.my.vo.OrderInfo;
+import com.my.vo.OrderLine;
 import com.my.vo.Postal;
 import com.my.vo.Product;
 
@@ -45,6 +49,10 @@ class StartContainerTest {
 	@Autowired
 	@Qualifier("customerDAOOracle")
 	private CustomerDAO2 dao;
+	
+	@Autowired
+	@Qualifier("orderDAO")
+	private OrderDAO dao2;
 		
 //	@Test
 //	@DisplayName("Customer 자동주입")
@@ -120,7 +128,7 @@ class StartContainerTest {
 		}
 	}
 	
-	@Test
+	//@Test
 	@DisplayName("CustomerDAO insert Mybatis")
 	void testCustomerDAOInsert() {
 		
@@ -146,10 +154,42 @@ class StartContainerTest {
 		try {
 			Customer c = dao.selectById("id5");
 			assertNotNull(c);
-			System.out.println(c.getName());
-			System.out.println(c.getPostal());
+//			System.out.println(c.getName());
+//			System.out.println(c.getPostal());
+			log.info(c.getName()+":"+c.getPostal());
 		} catch (FindException e) {
 			fail(e.getMessage());
 		}
 	}
+	
+	//@Test
+	@DisplayName("OrderDAO insertLine Mybatis")
+	void testOrderLine(){
+		Product p = new Product();
+		p.setProd_no("C0001");
+		OrderLine orderline = new OrderLine(0,p,2);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			session.insert("OrderMapper.insertLine",orderline);
+		}catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	//@Test
+	@DisplayName("OrderDAO insertInfo Mybatis")
+	void testOrderInfo(){
+		
+		Customer c = new Customer();
+		c.setId("id5");
+		Date d =new Date();
+		OrderInfo orderinfo = new OrderInfo(109,c,d);
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			session.insert("OrderMapper.insertInfo",orderinfo);
+		}catch(Exception e) {
+			fail(e.getMessage());
+			
+		}
+	}
+
 }

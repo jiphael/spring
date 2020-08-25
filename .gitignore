@@ -7,3 +7,9 @@ di/target/classes/com/my/vo/Person.class
 di/target/classes/META-INF/maven/di/di/pom.xml
 *.class
 *.classpath
+Servers/.settings/org.eclipse.wst.server.core.prefs
+Servers/
+*.prefs
+*.MF
+mvc/target/m2e-wtp/web-resources/META-INF/maven/mvc/mvc/pom.properties
+*.jsdtscope

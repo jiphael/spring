@@ -4,150 +4,194 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+
 import com.my.exception.AddException;
+import com.my.exception.DuplicatedException;
 import com.my.exception.FindException;
 import com.my.sql.MyConnection;
 import com.my.vo.OrderInfo;
 import com.my.vo.OrderLine;
 import com.my.vo.Product;
 
+@Repository
+@Qualifier(value="orderDAO")
 public class OrderDAO {
-	public void insert(OrderInfo info) throws AddException{
-		Connection con = null;
-		try {
-			con = MyConnection.getConnection();
-			con.setAutoCommit(false); //ÀÚµ¿Ä¿¹Ô ÇØÁ¦
-			insertInfo(con, info);             //ÁÖ¹®±âº» Ãß°¡
-			insertLines(con, info.getLines()); //ÁÖ¹®»ó¼¼µé Ãß°¡
-			con.commit();
-		}catch(Exception e) {
-			e.printStackTrace();
-			if(con != null)
-				try {
-					con.rollback();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			throw new AddException(e.getMessage());
-		}finally {
-			MyConnection.close(con);
-		}
-	}
-	private void insertInfo(Connection con, OrderInfo info)  throws AddException{
-		//ÁÖ¹®±âº»Á¤º¸ Ãß°¡
-		PreparedStatement pstmt = null;
-		String insertInfoSQL = 
-				"INSERT INTO order_info(order_no, order_id, order_dt)"
-				+ " VALUES(order_seq.NEXTVAL,  ?, SYSDATE)";
-		
-		try {
-			pstmt = con.prepareStatement(insertInfoSQL);
-			pstmt.setString(1, info.getOrder_c().getId());
-			pstmt.executeUpdate();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new AddException(e.getMessage());
-		}finally {
-			MyConnection.close(pstmt, null);
-		}
-		
-	}
-	private void insertLines(Connection con, List<OrderLine> lines)  throws AddException{
-		//ÁÖ¹®»ó¼¼Á¤º¸µé Ãß°¡
-			
-		PreparedStatement pstmt = null;
-		String insertLineSQL = 
-			  "INSERT INTO order_line(order_no, order_prod_no, order_quantity)"
-			+ " VALUES (order_seq.CURRVAL,       ?,            ?)";
-		try {
-			pstmt = con.prepareStatement(insertLineSQL);
-			for(OrderLine line: lines) {
-				pstmt.setString(1, line.getOrder_p().getProd_no());
-				pstmt.setInt(2, line.getOrder_quantity());
-				//pstmt.executeUpdate();
-				pstmt.addBatch(); //ÀÏ°ýÃ³¸®¿¡ Ãß°¡
+	@Autowired
+	private SqlSessionFactory sqlSessionFactory;
+
+//		Connection con = null;
+//		try {
+//			con = MyConnection.getConnection();
+//			con.setAutoCommit(false); //ï¿½Úµï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//			insertInfo(con, info);             //ï¿½Ö¹ï¿½ï¿½âº» ï¿½ß°ï¿½
+//			insertLines(con, info.getLines()); //ï¿½Ö¹ï¿½ï¿½ó¼¼µï¿½ ï¿½ß°ï¿½
+//			con.commit();
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//			if(con != null)
+//				try {
+//					con.rollback();
+//				} catch (SQLException e1) {
+//					e1.printStackTrace();
+//				}
+//			throw new AddException(e.getMessage());
+//		}finally {
+//			MyConnection.close(con);
+//		}
+//	}
+	public void insertInfo(OrderInfo info)  throws AddException{
+			SqlSession session = sqlSessionFactory.openSession();
+			try {session.insert("OrderMapper.insertInfo",info);
+			}catch(Exception e){
+				e.printStackTrace();
+				throw new AddException(e.getMessage());
+			}finally {
+				session.close();
 			}
-			pstmt.executeBatch(); //ÀÏ°ýÃ³¸®ÀÛ¾÷ ¼öÇà
-			
-		} catch (SQLException e) {
+	}
+//		//ï¿½Ö¹ï¿½ï¿½âº»ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+//		PreparedStatement pstmt = null;
+//		String insertInfoSQL = 
+//				"INSERT INTO order_info(order_no, order_id, order_dt)"
+//				+ " VALUES(order_seq.NEXTVAL,  ?, SYSDATE)";
+//		
+//		try {
+//			pstmt = con.prepareStatement(insertInfoSQL);
+//			pstmt.setString(1, info.getOrder_c().getId());
+//			pstmt.executeUpdate();
+//			
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			throw new AddException(e.getMessage());
+//		}finally {
+//			MyConnection.close(pstmt, null);
+//		}
+//		
+//	}
+	
+	private void insertLines(List<OrderLine> lines)  throws AddException{
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			session.insert("OrderMapper.insertLine", lines);
+		}catch(Exception e){
 			e.printStackTrace();
 			throw new AddException(e.getMessage());
 		}finally {
-			MyConnection.close(pstmt, null);
+			session.close();
 		}
-	}
+		}
+//		//ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+//			
+//		PreparedStatement pstmt = null;
+//		String insertLineSQL = 
+//			  "INSERT INTO order_line(order_no, order_prod_no, order_quantity)"
+//			+ " VALUES (order_seq.CURRVAL,       ?,            ?)";
+//		try {
+//			pstmt = con.prepareStatement(insertLineSQL);
+//			for(OrderLine line: lines) {
+//				pstmt.setString(1, line.getOrder_p().getProd_no());
+//				pstmt.setInt(2, line.getOrder_quantity());
+//				//pstmt.executeUpdate();
+//				pstmt.addBatch(); //ï¿½Ï°ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+//			}
+//			pstmt.executeBatch(); //ï¿½Ï°ï¿½Ã³ï¿½ï¿½ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½ï¿½
+//			
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			throw new AddException(e.getMessage());
+//		}finally {
+//			MyConnection.close(pstmt, null);
+//		}
+	
 	
 	public List<OrderInfo> selectById(String id) throws FindException{
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
+		SqlSession session = sqlSessionFactory.openSession();
 		try {
-			con = MyConnection.getConnection();
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new FindException(e.getMessage());
-		}
-		String selectByIdSQL = 
-			"SELECT info.order_no,  order_id, order_dt\r\n" + 
-			"      ,order_prod_no, prod_name, prod_price\r\n" + 
-			"      , order_quantity     \r\n" + 
-			"FROM order_info info \r\n" + 
-			"JOIN order_line line ON (info.order_no = line.order_no)\r\n" + 
-			"JOIN product p ON (line.order_prod_no = p.prod_no)\r\n" + 
-			"WHERE order_id = ? "+
-			"ORDER BY info.order_no DESC";
-		
-		try {
-			pstmt = con.prepareStatement(selectByIdSQL);
-			pstmt.setString(1, id);
-			rs = pstmt.executeQuery();
-			List<OrderInfo> infos = new ArrayList<>(); 			
-			List<OrderLine> lines = null; //ÁÖ¹®»ó¼¼µé
-			int oldOrder_no = 0;//ÀÌÀüÁÖ¹®¹øÈ£
-			while(rs.next()) {
-				int order_no = rs.getInt("order_no"); //ÇàÀÇ ÁÖ¹®¹øÈ£ ¾ò±â				
-				if(oldOrder_no != order_no) {
-					OrderInfo info=null; //ÁÖ¹®±âº»
-					info = new OrderInfo();   //ÁÖ¹®±âº»°´Ã¼ »õ·Î »ý¼º
-					info.setOrder_no(order_no); 
-					info.setOrder_dt(rs.getDate("order_dt"));
-					lines = new ArrayList<>(); //ÁÖ¹®»ó¼¼µélines »õ·Î »ý¼º
-					info.setLines(lines); 
-					infos.add(info);	
-					oldOrder_no = order_no;
-				}
-				Product order_p = new Product();
-				order_p.setProd_no(rs.getString("order_prod_no"));
-				order_p.setProd_name(rs.getString("prod_name"));
-				order_p.setProd_price(rs.getInt("prod_price"));
-				//order_p.setAmount(rs.getInt("±Ý¾×"));//???
-				
-				OrderLine line = new OrderLine(
-						 order_no
-						,order_p
-						,rs.getInt("order_quantity")
-						);
-				//line.setAmount(rs.getInt("±Ý¾×"));
-				lines.add(line);
-			}
-			if(infos.size() == 0) {
-				throw new FindException("ÁÖ¹®ÀÌ ¾ø½À´Ï´Ù");
-			}
-			return infos;
-		} catch (SQLException e) {
+			OrderInfo info = session.selectOne("OrderMapper.selectById",id);	
+		}catch(Exception e){
 			e.printStackTrace();
 			throw new FindException(e.getMessage());
 		}finally {
-			MyConnection.close(rs, pstmt, con);
-		}
-		
+			session.close();
+		}	return null;
 	}
+//		Connection con = null;
+//		PreparedStatement pstmt = null;
+//		ResultSet rs = null;
+//		
+//		try {
+//			con = MyConnection.getConnection();
+//		} catch (ClassNotFoundException | SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			throw new FindException(e.getMessage());
+//		}
+//		String selectByIdSQL = 
+//			"SELECT info.order_no,  order_id, order_dt\r\n" + 
+//			"      ,order_prod_no, prod_name, prod_price\r\n" + 
+//			"      , order_quantity     \r\n" + 
+//			"FROM order_info info \r\n" + 
+//			"JOIN order_line line ON (info.order_no = line.order_no)\r\n" + 
+//			"JOIN product p ON (line.order_prod_no = p.prod_no)\r\n" + 
+//			"WHERE order_id = ? "+
+//			"ORDER BY info.order_no DESC";
+//		
+//		try {
+//			pstmt = con.prepareStatement(selectByIdSQL);
+//			pstmt.setString(1, id);
+//			rs = pstmt.executeQuery();
+//			List<OrderInfo> infos = new ArrayList<>(); 			
+//			List<OrderLine> lines = null; //ï¿½Ö¹ï¿½ï¿½ó¼¼µï¿½
+//			int oldOrder_no = 0;//ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½È£
+//			while(rs.next()) {
+//				int order_no = rs.getInt("order_no"); //ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½È£ ï¿½ï¿½ï¿½				
+//				if(oldOrder_no != order_no) {
+//					OrderInfo info=null; //ï¿½Ö¹ï¿½ï¿½âº»
+//					info = new OrderInfo();   //ï¿½Ö¹ï¿½ï¿½âº»ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//					info.setOrder_no(order_no); 
+//					info.setOrder_dt(rs.getDate("order_dt"));
+//					lines = new ArrayList<>(); //ï¿½Ö¹ï¿½ï¿½ó¼¼µï¿½lines ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//					info.setLines(lines); 
+//					infos.add(info);	
+//					oldOrder_no = order_no;
+//				}
+//				Product order_p = new Product();
+//				order_p.setProd_no(rs.getString("order_prod_no"));
+//				order_p.setProd_name(rs.getString("prod_name"));
+//				order_p.setProd_price(rs.getInt("prod_price"));
+//				//order_p.setAmount(rs.getInt("ï¿½Ý¾ï¿½"));//???
+//				
+//				OrderLine line = new OrderLine(
+//						 order_no
+//						,order_p
+//						,rs.getInt("order_quantity")
+//						);
+//				//line.setAmount(rs.getInt("ï¿½Ý¾ï¿½"));
+//				lines.add(line);
+//			}
+//			if(infos.size() == 0) {
+//				throw new FindException("ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½");
+//			}
+//			return infos;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			throw new FindException(e.getMessage());
+//		}finally {
+//			MyConnection.close(rs, pstmt, con);
+//		}
+//		
+	
 	
 	
 	
