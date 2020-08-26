@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>jsonRequest.html</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+alert("script start");
+$.ajax({
+	url:"f.do"
+	,method:"post"
+ 	,data: '[{"prod_no":"C0001", "prod_name":"아메리카노","prod_price":1000}, {"prod_no":"C0002", "prod_name":"아이스아메리카노","prod_price":2000}]'
+//	,data: '["c1", "c2", "c3"]' //a=hello&b=1&c=test
+	,contentType: 'application/json; charset=utf-8'
+	,success:function(data){
+		alert(data);
+	}
+});
+</script>
+
+</head>
+<body>
+
+</body>
+</html>
